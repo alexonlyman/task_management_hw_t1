@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    container_name: task_app_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: webDB
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  app:
+    build: .
+    container_name: task_management_app
+    image: management-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/webDB
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - postgres
