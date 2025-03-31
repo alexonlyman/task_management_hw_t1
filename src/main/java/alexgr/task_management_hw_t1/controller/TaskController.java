@@ -17,41 +17,31 @@ public class TaskController {
 
     private final TaskService taskService;
 
-
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task createdTask = taskService.createTask(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Task createTask(@RequestBody Task task) {
+        return taskService.createTask(task);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable Integer id) throws TaskNotFoundException {
-        Task task = taskService.getTask(id);
-        return ResponseEntity.ok(task);
+    public Task getTask(@PathVariable Integer id) throws TaskNotFoundException {
+        return taskService.getTask(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Integer id, @RequestBody Task task) throws TaskNotFoundException {
-        Task updatedTask = taskService.updateTask(id, task);
-        return ResponseEntity.ok(updatedTask);
+    public Task updateTask(@PathVariable Integer id, @RequestBody Task task) throws TaskNotFoundException {
+        return taskService.updateTask(id, task);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Integer id) throws TaskNotFoundException {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable Integer id) throws TaskNotFoundException {
         taskService.deleteTask(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getTasks() {
-        List<Task> tasks = taskService.getTasks();
-        return ResponseEntity.ok(tasks);
+    public List<Task> getTasks() {
+        return taskService.getTasks();
     }
-
-
-
-
-
-
 
 }
