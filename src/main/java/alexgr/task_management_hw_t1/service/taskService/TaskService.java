@@ -1,7 +1,9 @@
-package alexgr.task_management_hw_t1.service;
+package alexgr.task_management_hw_t1.service.taskService;
 
+import alexgr.task_management_hw_t1.dto.Status;
+import alexgr.task_management_hw_t1.entity.TaskEntity;
 import alexgr.task_management_hw_t1.exceptions.TaskNotFoundException;
-import alexgr.task_management_hw_t1.model.Task;
+import alexgr.task_management_hw_t1.dto.Task;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface TaskService {
     void deleteTask(Integer id) throws TaskNotFoundException;
 
     List<Task> getTasks();
+
+    Task updateStatus(Integer id, Status status) throws TaskNotFoundException;
 }
