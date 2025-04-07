@@ -1,7 +1,7 @@
 package alexgr.task_management_hw_t1.utils;
 
 import alexgr.task_management_hw_t1.entity.TaskEntity;
-import alexgr.task_management_hw_t1.model.Task;
+import alexgr.task_management_hw_t1.dto.Task;
 import org.springframework.stereotype.Component;
 
 
@@ -13,11 +13,12 @@ public class TaskMapper {
         entity.setUserId(task.userId());
         entity.setDescription(task.description());
         entity.setTitle(task.title());
+        entity.setStatus(task.status());
         return entity;
     }
 
     public Task toDto(TaskEntity task) {
-        return new Task(task.getId(), task.getTitle(), task.getDescription(), task.getUserId());
+        return new Task(task.getId(), task.getTitle(), task.getDescription(), task.getUserId(),task.getStatus());
     }
 
 }

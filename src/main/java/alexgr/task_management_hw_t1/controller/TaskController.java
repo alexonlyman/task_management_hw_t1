@@ -1,11 +1,14 @@
 package alexgr.task_management_hw_t1.controller;
 
+import alexgr.task_management_hw_t1.dto.Status;
+import alexgr.task_management_hw_t1.dto.UpdateStatusRequest;
+import alexgr.task_management_hw_t1.entity.TaskEntity;
 import alexgr.task_management_hw_t1.exceptions.TaskNotFoundException;
-import alexgr.task_management_hw_t1.model.Task;
-import alexgr.task_management_hw_t1.service.TaskService;
+import alexgr.task_management_hw_t1.dto.Task;
+import alexgr.task_management_hw_t1.service.taskService.TaskService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
+@Slf4j
 public class TaskController {
 
     private final TaskService taskService;
@@ -42,6 +46,13 @@ public class TaskController {
     @GetMapping
     public List<Task> getTasks() {
         return taskService.getTasks();
+    }
+
+    @PutMapping("/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public Task updateTaskStatus(@PathVariable Integer id,
+                                       @RequestBody UpdateStatusRequest request) throws TaskNotFoundException {
+        return taskService.updateStatus(id, request.status());
     }
 
 }

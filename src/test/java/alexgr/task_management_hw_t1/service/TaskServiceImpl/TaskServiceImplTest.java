@@ -1,9 +1,11 @@
 package alexgr.task_management_hw_t1.service.TaskServiceImpl;
 
+import alexgr.task_management_hw_t1.dto.Status;
 import alexgr.task_management_hw_t1.entity.TaskEntity;
 import alexgr.task_management_hw_t1.exceptions.TaskNotFoundException;
-import alexgr.task_management_hw_t1.model.Task;
+import alexgr.task_management_hw_t1.dto.Task;
 import alexgr.task_management_hw_t1.repository.TaskRepository;
+import alexgr.task_management_hw_t1.service.taskService.TaskServiceImpl.TaskServiceImpl;
 import alexgr.task_management_hw_t1.utils.TaskMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +34,7 @@ class TaskServiceImplTest {
 
     @Test
     void createTask_ShouldReturnCreatedTask() {
-        Task task = new Task(1,"test title", "test desc",1);
+        Task task = new Task(1,"test title", "test desc",1, Status.NEW);
         TaskEntity entity = new TaskEntity();
         entity.setDescription("test desc");
         entity.setTitle("test title");
@@ -43,7 +45,7 @@ class TaskServiceImplTest {
         savedEntity.setTitle(entity.getTitle());
         savedEntity.setDescription(entity.getDescription());
         savedEntity.setUserId(entity.getUserId());
-        Task createdTask = new Task(1,"test title", "test desc",1);
+        Task createdTask = new Task(1,"test title", "test desc",1, Status.NEW);
 
         when(mapper.toEntity(task)).thenReturn(entity);
         when(taskRepository.save(entity)).thenReturn(savedEntity);
@@ -66,7 +68,7 @@ class TaskServiceImplTest {
         entity.setTitle("test title");
         entity.setId(1);
         entity.setUserId(1);
-        Task task = new Task(1,"test title", "test desc",1);
+        Task task = new Task(1,"test title", "test desc",1, Status.NEW);
 
         when(taskRepository.findById(id)).thenReturn(Optional.of(entity));
         when(mapper.toDto(entity)).thenReturn(task);
@@ -90,7 +92,7 @@ class TaskServiceImplTest {
     @Test
     void updateTask_ShouldReturnUpdatedTask() throws TaskNotFoundException {
         int id = 1;
-        Task task = new Task(1,"test title", "test desc",1);
+        Task task = new Task(1,"test title", "test desc",1, Status.NEW);
         TaskEntity entity = new TaskEntity();
         entity.setDescription("test desc");
         entity.setTitle("test title");
@@ -102,7 +104,7 @@ class TaskServiceImplTest {
         updatedEntity.setTitle("Updated Title");
         updatedEntity.setDescription("Updated Description");
         updatedEntity.setUserId(1);
-        Task updatedTask = new Task(1, "Updated title", "Updated Description", 1);
+        Task updatedTask = new Task(1, "Updated title", "Updated Description", 1, Status.NEW);
 
         when(taskRepository.findById(id)).thenReturn(Optional.of(entity));
         when(taskRepository.save(entity)).thenReturn(updatedEntity);
@@ -148,13 +150,13 @@ class TaskServiceImplTest {
 
 
         List<Task> tasks = List.of(
-                new Task(1,"test title", "test desc",1),
-                new Task(2,"test2 title", "test2 desc",2)
+                new Task(1,"test title", "test desc",1, Status.NEW),
+                new Task(2,"test2 title", "test2 desc",2, Status.NEW)
         );
         when(taskRepository.findAll()).thenReturn(entities);
         when(mapper.toDto(any(TaskEntity.class))).thenAnswer(invocation -> {
             TaskEntity entity = invocation.getArgument(0);
-            return new Task(entity.getId(), entity.getTitle(), entity.getDescription(),entity.getUserId());
+            return new Task(entity.getId(), entity.getTitle(), entity.getDescription(),entity.getUserId(),entity.getStatus());
         });
 
         List<Task> result = taskService.getTasks();
