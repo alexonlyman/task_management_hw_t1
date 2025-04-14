@@ -1,23 +1,28 @@
-package alexgr.task_management_hw_t1.service.TaskServiceImpl;
+package alexgr.task_management_hw_t1.service.taskService.TaskServiceImpl;
 
 import alexgr.task_management_hw_t1.annotation.Logged;
+import alexgr.task_management_hw_t1.dto.Status;
 import alexgr.task_management_hw_t1.exceptions.TaskNotFoundException;
 import alexgr.task_management_hw_t1.entity.TaskEntity;
-import alexgr.task_management_hw_t1.model.Task;
+import alexgr.task_management_hw_t1.dto.Task;
+import alexgr.task_management_hw_t1.kafka.KafkaTaskProducer;
 import alexgr.task_management_hw_t1.repository.TaskRepository;
-import alexgr.task_management_hw_t1.service.TaskService;
+import alexgr.task_management_hw_t1.service.taskService.TaskService;
 import alexgr.task_management_hw_t1.utils.TaskMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TaskServiceImpl implements TaskService {
 
     private final TaskMapper mapper;
     private final TaskRepository taskRepository;
+    private final KafkaTaskProducer kafkaTaskProducer;
 
     @Override
     public Task createTask(Task task) {
@@ -60,5 +65,17 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> getTasks() {
         List<TaskEntity> entities = taskRepository.findAll();
         return entities.stream().map(mapper::toDto).toList();
+    }
+
+    @Override
+    public Task  updateStatus(Integer id, Status newStatus) throws TaskNotFoundException {
+        TaskEntity taskEntity = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        taskEntity.setStatus(newStatus);
+        taskRepository.save(taskEntity);
+        Task taskDto = mapper.toDto(taskEntity);
+        kafkaTaskProducer.send("task_status_exchanged", taskDto);
+        return taskDto;
     }
 }
