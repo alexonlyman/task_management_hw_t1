@@ -20,14 +20,14 @@ public class KafkaTaskConsumer {
     private final NotificationService notificationService;
 
     @KafkaListener(id = "${kafka.consumer.group-id}",
-    topics = "${kafka.topic.task_status_exchanged}",
-    containerFactory = "kafkaListenerContainerFactory")
+            topics = "${kafka.topic.task_status_exchanged}",
+            containerFactory = "kafkaListenerContainerFactory")
     public void listener(@Payload Task task, Acknowledgment acknowledgment) throws MessagingException {
-       try {
-                log.info("Получено сообщение о задаче: {}", task);
-                notificationService.sendStatusChangedNotification(task);
+        try {
+            log.info("Получено сообщение о задаче: {}", task);
+            notificationService.sendStatusChangedNotification(task);
         } finally {
-           acknowledgment.acknowledge();
-       }
+            acknowledgment.acknowledge();
+        }
     }
 }

@@ -5,6 +5,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,15 +17,19 @@ import org.springframework.stereotype.Component;
 public class NotificationService {
 
     private final JavaMailSender mailSender;
+    @Value("${spring.mail.sender}")
+    private String sender;
+    @Value("${spring.mail.recipient}")
+    private String recipient;
 
     public void sendStatusChangedNotification(Task task) throws MessagingException {
-        String to = "chuvakchel@mail.ru";
+        String to = recipient;
         String subject = "Статус задачи обновлен";
         String text = String.format("Здравствуйте! Статус задачи '%s' изменён на: %s",
                 task.title(), task.status());
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("bondjigaralex@yandex.ru");
+        message.setFrom(sender);
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);

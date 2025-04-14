@@ -73,7 +73,12 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
         taskEntity.setStatus(newStatus);
-        taskRepository.save(taskEntity);
+        if (taskEntity.getStatus().equals(newStatus)) {
+            taskRepository.save(taskEntity);
+        } else {
+            log.error("status was not exchanged");
+        }
+
         Task taskDto = mapper.toDto(taskEntity);
         kafkaTaskProducer.send("task_status_exchanged", taskDto);
         return taskDto;
